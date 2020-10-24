@@ -1,0 +1,40 @@
+version: "3.7"
+
+services:
+
+  node-angular-starter-db:
+    image: mongo
+    restart: always
+    container_name: node-angular-starter-db
+    ports:
+      - 27017:27017 
+    volumes:
+      - node-angular-starter-db:/data/db
+    networks: 
+      - node-angular-starter-network
+
+  node-angular-starter-app:
+    image: lromero8/node-angular-starter-app:prod
+    build: 
+      context: .
+      target: prod
+    container_name: node-angular-starter-app
+    restart: always
+    volumes: 
+      - .:/app
+    ports:
+      - "80:5000"
+    depends_on:
+      - node-angular-starter-db
+    environment:
+      - MONGODB_URI=mongodb://node-angular-starter-db/node-angular-starter-db
+    networks: 
+      - node-angular-starter-network
+
+volumes: 
+  node-angular-starter-db:
+    name: node-angular-starter-db
+
+networks: 
+  node-angular-starter-network:
+    name: node-angular-starter-network
